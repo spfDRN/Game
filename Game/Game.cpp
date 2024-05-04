@@ -118,17 +118,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  ФУНКЦИЯ: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  ЦЕЛЬ: Обрабатывает сообщения в главном окне.
-//
-//  WM_COMMAND  - обработать меню приложения
-//  WM_PAINT    - Отрисовка главного окна
-//  WM_DESTROY  - отправить сообщение о выходе и вернуться
-//
-//
-
 
 void Robot(HDC hdc, int cx, int cy) {
     HBRUSH hBrush;
@@ -1123,7 +1112,7 @@ void ST(HDC hdc) {
     SelectObject(hdc, hFont);
     SetTextColor(hdc, RGB(128, 0, 128));
     TCHAR strT[180] = L"by: spfDRN";
-    TextOut(hdc, 900, 100, (LPCWSTR)strT, _tcslen(strT));
+    TextOut(hdc, 900, 450, (LPCWSTR)strT, _tcslen(strT));
     DeleteObject(hFont);
 }
 void ST1(HDC hdc) {
@@ -1133,7 +1122,7 @@ void ST1(HDC hdc) {
     SelectObject(hdc, hFont);
     SetTextColor(hdc, RGB(128, 0, 128));
     TCHAR strT[180] = L"Ну,погоди!";
-    TextOut(hdc, 870, 120, (LPCWSTR)strT, _tcslen(strT));
+    TextOut(hdc, 870, 470, (LPCWSTR)strT, _tcslen(strT));
     DeleteObject(hFont);
 }
 void WT(HDC hdc) {
@@ -1157,24 +1146,45 @@ void TT(HDC hdc) {
     SelectObject(hdc, hFont);
     SetTextColor(hdc, RGB(128, 0, 128));
     TCHAR strT[180] = L"Спасибо за игру <3";
-    TextOut(hdc, 700, 250, (LPCWSTR)strT, _tcslen(strT));
+    TextOut(hdc, 680, 250, (LPCWSTR)strT, _tcslen(strT));
     DeleteObject(hFont);
 }
+
+//start
+struct Image { int cx; int cy; int vx; int vy; };
+struct Image imZayc = { -10 ,800,10,0 };
+struct Image imVolk = { -60 ,800,10,0 };
+struct Image imRobot = { 1500,1220,0,0 };
+//Win
+struct Image imZaycW = { 970 ,505, 0, -5 };
+struct Image imMonetkaW = { -100 ,505, 10, 0 };
+struct Image imMonetkaW2 = { 2045 ,505, -10, 0 };
+struct Image imRobotW = { -30, 505, 10, 0 };
+struct Image imRobotW2 = { 1975, 505, -10, 0 };
+//Loss
+struct Image imZaycL = { 970, 600, 0, 0 };
+struct Image imVolkL = { 970, 750, 10, 0 };
+//final
+struct Image imMonetkaF = { -50, 505, 10, 0 }; //770 
+struct Image imMonetkaF2 = { 0, 505, 10, 0 }; //870
+struct Image imMonetkaF3 = { 970, 1125, 0, -10 }; //970
+struct Image imMonetkaF4 = { 1950, 505, -10, 0 }; //1070
+struct Image imMonetkaF5 = { 2000, 505, -10, 0 }; //1160
+
 void DrawStart(HDC hdc) {
     ST(hdc);
     ST1(hdc);
-    Robot(hdc, 900, 505);
-    zayc(hdc, 770, 502);
-    money(hdc, 830, 505);
-    volk(hdc, 1000, 500);
+    Robot(hdc, imRobot.cx, imRobot.cy);
+    zayc(hdc, imZayc.cx, imZayc.cy);
+    volk(hdc, imVolk.cx, imVolk.cy);
 }
 void DrawWin(HDC hdc) {
     WT(hdc);
-    money(hdc, 770, 505);
-    Robot(hdc, 870, 505);
-    zayc(hdc, 970, 505);
-    Robot(hdc, 1070, 505);
-    money(hdc, 1160, 505);
+    money(hdc, imMonetkaW.cx, imMonetkaW.cy);
+    Robot(hdc, imRobotW.cx, imRobotW.cy);
+    zayc(hdc, imZaycW.cx, imZaycW.cy);
+    Robot(hdc, imRobotW2.cx, imRobotW2.cy);
+    money(hdc, imMonetkaW2.cx, imMonetkaW2.cy);
 }
 void DrawGame(HDC hdc) {
     if (zaycd.Helth > 0) {
@@ -1197,19 +1207,16 @@ void DrawGame(HDC hdc) {
 void DrawLoss(HDC hdc) {
     LT(hdc);
 
-    money(hdc, 770, 505);
-    money(hdc, 870, 505);
-    volk(hdc, 970, 505);
-    money(hdc, 1070, 505);
-    money(hdc, 1160, 505);
+    volk(hdc, imVolkL.cx, imVolkL.cy);
+    zayc(hdc, imZaycL.cx, imZaycL.cy);
 }
 void DrawFinal(HDC hdc) {
     TT(hdc);
-    money(hdc, 770, 505);
-    money(hdc, 870, 505);
-    money(hdc, 970, 505);
-    money(hdc, 1070, 505);
-    money(hdc, 1160, 505);
+    money(hdc, imMonetkaF.cx, imMonetkaF.cy);
+    money(hdc, imMonetkaF2.cx, imMonetkaF2.cy);
+    money(hdc, imMonetkaF3.cx, imMonetkaF3.cy);
+    money(hdc, imMonetkaF4.cx, imMonetkaF4.cy);
+    money(hdc, imMonetkaF5.cx, imMonetkaF5.cy);
 }
 void GoD() {
     int dx = 0, dy = 0;
@@ -1378,10 +1385,149 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         if ((mode == Win) || (mode == Loss)) {
             step++;
-            if (step > 30)
+            if (step > 130)
                 mode = Final;
         }
         InvalidateRect(hWnd, NULL, TRUE);
+
+        if (mode == Start) {
+
+            imZayc.cx += imZayc.vx;
+            imZayc.cy += imZayc.vy;
+            imVolk.cx += imVolk.vx;
+            imVolk.cy += imVolk.vy;
+            imRobot.cx += imRobot.vx;
+            imRobot.cy += imRobot.vy;
+            if ((imVolk.cx == 2000) && (imVolk.cy == 800)) {
+                imVolk.vx = 0;
+                imVolk.vy = -10;
+                imVolk.cx = 1500;
+                imVolk.cy = 1080;
+
+                imRobot.vx = 0;
+                imRobot.vy = -10;
+                imRobot.cx = 1500;
+                imRobot.cy = 1220;
+
+            }
+            if ((imVolk.cy == -150) && (imVolk.cx == 1500)) {
+                imVolk.vx = 0;
+                imVolk.vy = 10;
+                imVolk.cx = 180;
+                imVolk.cy = -160;
+                imZayc.vx = 0;
+                imZayc.vy = 10;
+                imZayc.cx = 180;
+                imZayc.cy = -10;
+            }
+            if ((imVolk.cx == 180) && (imVolk.cy == 1100)) {
+                imVolk.vx = -10;
+                imVolk.vy = 0;
+                imVolk.cx = 1850;
+                imVolk.cy = 100;
+                imRobot.vx = -10;
+                imRobot.vy = 0;
+                imRobot.cx = 1930;
+                imRobot.cy = 100;
+            }
+            if ((imVolk.cx == -60) && (imVolk.cy == 100)) {  
+                imVolk.vx = 10;
+                imVolk.vy = 0;
+                imVolk.cx = -60;
+                imVolk.cy = 800;
+                imZayc.vx = 10;
+                imZayc.vy = 0;
+                imZayc.cx = -10;
+                imZayc.cy = 800;
+            }
+            }
+            InvalidateRect(hWnd, NULL, TRUE);
+            if (mode == Win) {
+
+                imZaycW.cx += imZaycW.vx;
+                imZaycW.cy += imZaycW.vy;
+                imMonetkaW.cx += imMonetkaW.vx;
+                imMonetkaW.cy += imMonetkaW.vy;
+                imMonetkaW2.cx += imMonetkaW2.vx;
+                imMonetkaW2.cy += imMonetkaW2.vy;
+                imRobotW.cx += imRobotW.vx;
+                imRobotW.cy += imRobotW.vy;
+                imRobotW2.cx += imRobotW2.vx;
+                imRobotW2.cy += imRobotW2.vy;
+                if ((imRobotW.cx == 890) && (imRobotW.cy == 505)) {
+                    imRobotW.vx = 0;
+                    imRobotW.vy = 0;
+
+                    imMonetkaW.vx = 0;
+                    imMonetkaW.vy = 0;
+
+                    imRobotW2.vx = 0;
+                    imRobotW2.vy = 0;
+
+                    imMonetkaW2.vx = 0;
+                    imMonetkaW2.vy = 0;
+                }
+                if ((imZaycW.cx == 970) && (imZaycW.cy == 495)) { 
+                    imZaycW.cx = 970;
+                    imZaycW.cy = 505;
+                }
+            }
+            InvalidateRect(hWnd, NULL, TRUE);
+            if (mode == Loss) {
+                imVolkL.cx += imVolkL.vx;
+                imVolkL.cy += imVolkL.vy;
+                if ((imVolkL.cx == 1100) && (imVolkL.cy == 750)) {
+                    imVolkL.vx = 0;
+                    imVolkL.vy = -10;
+                }
+                if ((imVolkL.cx == 1100) && (imVolkL.cy == 450)) {
+                    imVolkL.vx = -10;
+                    imVolkL.vy = 0;
+                }
+                if ((imVolkL.cx == 880) && (imVolkL.cy == 450)) {
+                    imVolkL.vx = 0;
+                    imVolkL.vy = 10;
+                }
+                if ((imVolkL.cx == 880) && (imVolkL.cy == 750)) {
+                    imVolkL.vx = 10;
+                    imVolkL.vy = 0;
+                }
+            }
+            InvalidateRect(hWnd, NULL, TRUE);
+            if (mode == Final) {
+                imMonetkaF.cx += imMonetkaF.vx;
+                imMonetkaF.cy += imMonetkaF.vy;
+                imMonetkaF2.cx += imMonetkaF2.vx;
+                imMonetkaF2.cy += imMonetkaF2.vy;
+                imMonetkaF3.cx += imMonetkaF3.vx;
+                imMonetkaF3.cy += imMonetkaF3.vy;
+                imMonetkaF4.cx += imMonetkaF4.vx;
+                imMonetkaF4.cy += imMonetkaF4.vy;
+                imMonetkaF5.cx += imMonetkaF5.vx;
+                imMonetkaF5.cy += imMonetkaF5.vy;
+                if ((imMonetkaF.cx == 770) && (imMonetkaF.cy == 505)) { //d
+                    imMonetkaF.vx = 0;
+                    imMonetkaF.vy = 0;
+                }
+                if ((imMonetkaF2.cx == 870) && (imMonetkaF2.cy == 505)) { //d
+                    imMonetkaF2.vx = 0;
+                    imMonetkaF2.vy = 0;
+                }
+                if ((imMonetkaF3.cx == 970) && (imMonetkaF3.cy == 505)) { //Sred
+                    imMonetkaF3.vx = 0;
+                    imMonetkaF3.vy = 0;
+                }
+                if ((imMonetkaF4.cx == 1070) && (imMonetkaF4.cy == 505)) {
+                    imMonetkaF4.vx = 0;
+                    imMonetkaF4.vy = 0;
+                }
+                if ((imMonetkaF5.cx == 1160) && (imMonetkaF5.cy == 505)) { 
+                    imMonetkaF5.vx = 0;
+                    imMonetkaF5.vy = 0;
+                }
+            }
+            InvalidateRect(hWnd, NULL, TRUE);
+
         break;
 
     case WM_KEYDOWN:
